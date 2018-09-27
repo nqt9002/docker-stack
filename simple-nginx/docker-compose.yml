@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+  nginx:
+    image: nginx:alpine
+    networks:
+      - nginx-proxy
+    volumes: 
+      - config:/etc/nginx/conf.d
+      - html:/usr/share/nginx/html
+    environment:
+      VIRTUAL_HOST: ${DOMAIN}
+      LETSENCRYPT_HOST: ${DOMAIN}
+      LETSENCRYPT_EMAIL: ${EMAIL}
+
+volumes:
+  config:
+    driver: local
+  html:
+    driver: local
+
+networks:
+  nginx-proxy:
+    external:
+      name: web
