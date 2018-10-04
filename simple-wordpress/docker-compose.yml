@@ -4,9 +4,6 @@ networks:
   nginx-proxy:
     external:
       name: web
-  db:
-    external:
-      name: db
 
 volumes:
   nginx_config:
@@ -21,8 +18,6 @@ volumes:
 services:
   db:
     image: mysql:latest
-    networks:
-      - db
     restart: always
     volumes:
       - db_data:/var/lib/mysql
@@ -56,7 +51,6 @@ services:
     expose:
       - 9000
     networks:
-      - db
       - nginx-proxy
     volumes:
       - /var/lib/docker/templates/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
