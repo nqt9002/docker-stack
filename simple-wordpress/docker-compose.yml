@@ -50,8 +50,6 @@ services:
     image: wordpress:php7.1-fpm-alpine
     expose:
       - 9000
-    networks:
-      - nginx-proxy
     volumes:
       - /var/lib/docker/templates/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
       - wp_config:/usr/local/etc/php/conf.d
