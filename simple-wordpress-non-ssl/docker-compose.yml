@@ -1,0 +1,70 @@
+version: '2'
+
+networks:
+  nginx-proxy:
+    external:
+      name: web
+  db:
+    external:
+      name: db
+
+volumes:
+  nginx_config:
+    driver: local
+  wp_config:
+    driver: local    
+  data:
+    driver: local
+  db_data:
+    driver: local      
+
+services:
+  db:
+    image: mysql:latest
+    networks:
+      - db
+    restart: always
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress  
+
+  nginx:
+    image: nginx:alpine
+    networks:
+      - nginx-proxy
+    volumes:
+      - /var/lib/docker/templates/nginx/site.template:/etc/nginx/conf.d/site.template
+      - nginx_config:/etc/nginx/conf.d
+      - data:/var/www/html
+    restart: always     
+    environment:
+      SERVER_NAME: ${DOMAIN}
+      VIRTUAL_HOST: ${DOMAIN}
+    command: /bin/sh -c "envsubst '$${SERVER_NAME}' < /etc/nginx/conf.d/site.template > /etc/nginx/conf.d/site.conf && exec nginx -g 'daemon off;'"
+    depends_on:
+      - wp
+
+  wp:
+    image: wordpress:php7.1-fpm-alpine
+    expose:
+      - 9000
+    networks:
+      - db
+      - nginx-proxy
+    volumes:
+      - /var/lib/docker/templates/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - wp_config:/usr/local/etc/php/conf.d
+      - data:/var/www/html
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    depends_on:
+      - db
+
