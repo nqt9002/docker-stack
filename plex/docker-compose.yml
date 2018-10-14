@@ -9,7 +9,7 @@ services:
 
   radarr:
     container_name: radarr
-    image: "linuxserver/radarr"
+    image: "linuxserver/radarr:latest"
     environment:
       PGID: 1000
       PUID: 1000
@@ -29,8 +29,7 @@ services:
   
   plex:
     container_name: plex
-    image: plexinc/pms-docker:plexpass
-#    network_mode: "host"
+    image: plexinc/pms-docker:latest
     restart: unless-stopped
     ports:
        - 32400:32400
@@ -39,10 +38,8 @@ services:
        - 32469:32469/udp
        - 5353:5353/udp
        - 1900:1900/udp
-#      - 32400:32400/tcp
        - 3005:3005/tcp
        - 8324:8324/tcp
-#       - 32469:32469/tcp
        - 32410:32410/udp
        - 32412:32412/udp
        - 32413:32413/udp
@@ -53,10 +50,11 @@ services:
       VIRTUAL_PORT: 32400
       LETSENCRYPT_HOST: plex${DOMAIN}
       LETSENCRYPT_EMAIL: ${EMAIL}
+      PLEX_CLAIM: ${CLAIM}
     volumes:
       - ${BASE_PATH}/config/plex:/config
       - ${BASE_PATH}/.plextranscode:/transcode
-      - ${BASE_PATH}/media/TV Shows:/tv
+      - ${BASE_PATH}/media/TV:/tv
       - ${BASE_PATH}/media/Movies:/movies
       - /etc/localtime:/etc/localtime:ro
     networks:
@@ -64,7 +62,7 @@ services:
   
   jackett:
     container_name: jackett
-    image: linuxserver/jackett
+    image: linuxserver/jackett:latest
     environment:
       PGID: 1000
       PUID: 1000
@@ -83,7 +81,7 @@ services:
 
   sonarr: 
     container_name: sonarr
-    image: linuxserver/sonarr
+    image: linuxserver/sonarr:latest
     environment:
       PGID: 1000
       PUID: 1000
@@ -95,7 +93,7 @@ services:
     volumes:
       - ${BASE_PATH}/config/sonarr:/config
       - ${BASE_PATH}/data:/downloads
-      - ${BASE_PATH}/media/TV Shows:/tv
+      - ${BASE_PATH}/media/TV:/tv
       - /etc/localtime:/etc/localtime:ro
     # restart: unless-stopped
     networks:
@@ -103,7 +101,7 @@ services:
 
   deluge:
     container_name: deluge
-    image: linuxserver/deluge
+    image: linuxserver/deluge:latest
     environment:
       PGID: 1000
       PUID: 1000
@@ -133,7 +131,7 @@ services:
 
   plexpy:
     container_name: plexpy
-    image: "linuxserver/plexpy"
+    image: "linuxserver/plexpy:latest"
     environment:
       PGID: 1000
       PUID: 1000
@@ -144,7 +142,7 @@ services:
       LETSENCRYPT_EMAIL: ${EMAIL}
     volumes:
       - ${BASE_PATH}/config/plexpy:/config
-      - ${BASE_PATH}/media/TV Shows:/tv
+      - ${BASE_PATH}/media/TV:/tv
       - /etc/localtime:/etc/localtime:ro
     # restart: unless-stopped
     networks:
