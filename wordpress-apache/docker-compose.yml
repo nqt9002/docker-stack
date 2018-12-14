@@ -6,15 +6,16 @@ services:
       - db:db
     environment:
       WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE_NAME}
       WORDPRESS_DB_USER: ${MYSQL_DATABASE_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
     volumes:
      - /var/lib/docker/templates/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
      - wp_config:/usr/local/etc/php/conf.d
      - data:/var/www/html
     networks:
      - default
-     - webgateway
+     - proxy
     labels:
      - "traefik.docker.network=webgateway"
      - "traefik.enable=true"
@@ -25,10 +26,13 @@ networks:
   default:
     external:
       name: db
-  webgateway:
-    external: true
+  proxy:
+    external:
+      name: webgateway
 volumes:
   data:
     driver: local
   wp_config:
     driver: local
+
+
