@@ -1,0 +1,34 @@
+version: '2'
+services:
+  wp:
+    image: wordpress:php7.1-apache
+    external_links:
+      - db:db
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
+      WORDPRESS_DB_USER: ${MYSQL_DATABASE_USER}
+    volumes:
+     - /var/lib/docker/templates/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+     - wp_config:/usr/local/etc/php/conf.d
+     - data:/var/www/html
+    networks:
+     - default
+     - webgateway
+    labels:
+     - "traefik.docker.network=webgateway"
+     - "traefik.enable=true"
+     - "traefik.frontend.rule=Host:${DOMAIN}"
+     - "traefik.port=80"
+
+networks:
+  default:
+    external:
+      name: db
+  webgateway:
+    external: true
+volumes:
+  data:
+    driver: local
+  wp_config:
+    driver: local
