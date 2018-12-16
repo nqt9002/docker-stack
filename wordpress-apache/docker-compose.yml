@@ -21,8 +21,8 @@ services:
      - "traefik.enable=true"
      - "traefik.frontend.rule=Host:${DOMAIN}"
      - "traefik.port=80"
-     - "traefik.frontend.headers.SSLRedirect=true"
-     - "traefik.frontend.entryPoints=http,https"
+#     - "traefik.frontend.headers.SSLRedirect=true"
+ #    - "traefik.frontend.entryPoints=http,https"
 networks:
   default:
     external:
